@@ -237,8 +237,8 @@
           "netPrice": 10.00,
           // La quantité
           "quantity": 1,
-          // Le prix total HT
-          "totalNetPrice": 10.00,
+          // Le prix total HT (netPrice * quantity)
+          "total": 10.00,
           // Le taux de TVA
           "taxRate": 20.00,
           // Le montant de la TVA
@@ -255,8 +255,8 @@
           "netPrice": 20.00,
           // La quantité
           "quantity": 1,
-          // Le prix total HT
-          "totalNetPrice": 20.00,
+          // Le prix total HT (netPrice * quantity)
+          "total": 20.00,
           // Le taux de TVA
           "taxRate": 10.00,
           // Le montant de la TVA
