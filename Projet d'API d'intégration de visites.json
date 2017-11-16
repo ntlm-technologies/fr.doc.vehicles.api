@@ -1,0 +1,271 @@
+  ////////////////////////////////////////////////////////////////////////////
+//  Définition d'un API d'ajout et de modification de visites dans FleetOne
+////////////////////////////////////////////////////////////////////////////
+//
+// L'authentification se fera via le SSO de Coservices. Voir Thierry Bréhon
+// Ce SSO retournera un Token d'identification.
+//
+// L'API d'ajout et de modification de visites dans FleetOne sera exposé sur un
+// endpoint Force Réseau qui sera fourni prochainement et de type :
+// PUT /visits/{external-id}
+//
+// {external-id} étant la clé unique de de la visite.
+// Ce service étant destiné à plusieurs fournisseurs de données cette clé doit être dédoublonnée avec l'identifiant
+// unique de ce fournisseur. Si votre visite a pour ID 4567 et que vous êtes le fournisseur de données "Alfred"
+// cet identifiant peut avoir pour valeur "Alfred.4567".
+// Par définition la méthode PUT permet de créer une visite, et de la modifier.
+//
+// On passera en json l'objet de la visite selon le format définit dans ce document.
+// On passera en Authorization Header le token fourni par le SSO de Coservices.
+//
+// Selon les cas la réponse contiendra un des codes HTTP suivant :
+// 422 - Unprocessable Entity : si les données fournies sont invalides ; par exemple une date d'entrée supérieure à la date de sortie.
+// 401 - Unauthorized : Si l'utilisateur Coservices n'est pas authentifié.
+// 403 - Forbidden : Si l'utilisateur Coservices n'a pas accès à ce client.
+// 200 - OK : Si la visite a été correctement traitée.
+// 201 - Created : Si la visite a été correctement créée.
+//
+// NB : les tables de mappages d'opérations, d'organes et de barêmes UGAP seront fournies par Alain Pierre.
+// Les autres codifications attendues sont listées directement dans la définition d'objet de ce document.
+{
+  // Constante définissant la source de données.
+  "source": "fakir",
+  // Numéro unique de la visite dans la source de données
+  // Le couple source/visit_id forme une clé unique.
+  "visit_id": "10378",
+  // L'identifiant FleetOne du client.
+  "client_id": 6743,
+  // Date d'entrée.
+  "entrance": "2017-01-01",
+  // Date de sortie.
+  "exit": "2017-01-03",
+  // Statut de la visite.
+  // 5 = Rendez-vous
+  // 10 = Planifiée
+  // 15 = Réalisée
+  // 20 = Facturée
+  "status": 10,
+  // Le véhicule arrêté.
+  "vehicule": {
+    // L'immatriculation du véhicule. CLE UNIQUE.
+    "licence": "45-GF-46",
+    // Le numéro de parc du véhicule.
+    "parkNumber": "476",
+    // Désignation du véhicule.
+    "designation": "RENAULT TRUCKS KERAX 385 / 26",
+    // Le contrat UGAP pour ce véhicule
+    "ugapContract": {
+      // Barême de facturation de la gestion de ce véhicule.
+      "code": 4567,
+      // Si le véhicule bénéficie de l'option remorquage et dépannage.
+      "recoveryOption": true,
+      // Si les données pétrolières du véhicule sont gérées.
+      "gasDataOption": false,
+      // Si la carte carburant est gérée.
+      "gasCardOption": true
+    },
+    // Date d'entrée en gestion du véhicule.
+    "entrance": "2016-01-01",
+    // Date de sortie de gestion du véhicule.
+    "exit": "2019-01-01"
+  },
+  // L'équipement concerné par la visite.
+  "equipment": {
+    // L'identifiant de l'équipement. CLE UNIQUE.
+    "id": "65776",
+    // Le type d'équipement.
+    // 2 = Véhicule
+    // 5 = Hayon
+    // 6 = Citerne
+    // 7 = Benne
+    // 8 = BOM
+    // 9 = Fourgon
+    // 10 = Groupe Froid
+    // 11 = Essieu
+    // 13 = Compresseur
+    // 14 = Groupe hydraulique
+    // 15 = Nacelle
+    // 17 = Grue
+    // 18 = Groupe électrogène
+    // 19 = Bras Ampliroll
+    // 20 = DM FOD
+    // 21 = Moteur auxiliaire
+    // 22 = Chariot élévateur
+    // 23 = Balayeuse camion
+    // 24 = Hydrocureuse
+    // 25 = Véhicule tracté
+    // 26 = Lame
+    // 27 = Saleuse
+    // 28 = Rotofaucheuse
+    // 29 = Chariot de battage CDB
+    // 30 = Cuve de stockage saumure SSA
+    // 31 = Epareuse sur Bras
+    // 32 = Etrave
+    // 33 = Godet AR de TP
+    // 38 = Tracteur Agricole
+    // 40 = Aileron
+    // 41 = Autre Equipement
+    // 42 = Balayeuse équipement
+    // 43 = Broyeur
+    // 45 = Tractopelle
+    // 46 = Microtracteur/tondeuse
+    // 47 = Centrale de fabrication Saumure FSA
+    // 48 = Fourgon Activité Glissière FGL
+    // 49 = Faucheuse à grand rendement FGR
+    // 50 = Unimog UNI
+    // 51 = Chargeur frontal
+    // 52 = Prestation de service
+    // 53 = Aspirateur
+    // 54 = Compacteur
+    // 55 = FLR
+    // 56 = Moto nettoyage
+    // 57 = Motoculteur
+    // 58 = Transpallette
+    // 60 = Chargeur
+    "type": 2,
+    // La désignation de l'équipement.
+    "designation": "POLYBRAS HYDRAULIQUE",
+    // Le numéro de parc de l'équipement.
+    "parkNumber": "H897",
+    // L'immatriculation de l'équipement.
+    "licence": "456CX45",
+    // Le numéro de série de l'équipement.
+    "serialNumber": "454313217"
+  },
+  // Le fournisseur de la visite.
+  "supplier": {
+    // Siret du fournisseur.
+    "officialReference": "9785469871350",
+    "designation": "Vienne VI"
+  },
+  // Le client.
+  "client": {
+    // Siret du client.
+    "officialReference": "1579543698745",
+    "designation": "Transports lyonnais"
+  },
+  // Index kilométrique
+  "kmIndex": 56434,
+  // Numéro d'ordre de réparation.
+  "orNumber": "654321",
+  // Numéro de commande client
+  "clientOrderNumber": "411567",
+  // Qualification de l'arrêt.
+  // 1 = Réglementaire
+  // 2 = Maintenance
+  // 3 = Réparation
+  // 4 = Dépannage
+  "qualification": 1,
+  // Cause de l'arêt.
+  // 1 = Usure anormale
+  // 2 = Pr et organes imprévisibles
+  // 3 = Malfaçon
+  // 4 = Entretien non fait ou en retard
+  // 5 = Du fait de l'utilisateur
+  // 6 = Véhicule non présenté à l'entretien
+  // 7 = Garantie
+  // 8 = OTS
+  // 9 = Accident
+  // 10 = Arrêt programmé
+  // 11 = Petite casse
+  // 12 = Arrêt suite contrôle réglementaire
+  "cause": 2,
+  // Liste des interventions de la visite.
+  "interventions": [
+    {
+      // Identifiant unique de l'intervention. CLE PRIMAIRE.
+      "id": "5464",
+      // Désignaton de l'intervention.
+      "designation": "Vidange",
+      // L'identfiant FleetOne de l'opération. Facultatif, l'opération peut être libre.
+      "operation_id": 654,
+      // La date de la prochaine intervention.
+      "nextIntervention": "2018-07-01",
+      // Les informations de contrôle réglementaire.
+      "controlInfo": {
+        "issued": "2017-01-02",
+        // Si le contrôle réglementaire a réussi.
+        "success": true
+      },
+      // Le prix HT de l'intervention.
+      "Price": 123.3,
+      // Le nombre d'heure de main d'oeuvre. Ici 4h30.
+      "Time": 4.5,
+      // L'organe concerné par l'intervention. Voir liste.
+      "Organ": 123,
+      // La nature de l'intervention.
+      // 1 = Réglementaire
+      // 2 = Maintenance planifiée
+      // 3 = Curatif
+      // 4 = Casse
+      // 5 = Accident
+      // 6 = Maintenance usure
+      "Nature": 1
+    }
+  ],
+  // La liste des factures, selon les taux de TVA : 20%, 13%, 10%, 8.5%
+  "invoices": [
+    {
+      // Le fournisseur.
+      "supplier": {
+        // Siret du fournisseur.
+        "officialReference": "9785469871350",
+        "designation": "Vienne VI"
+      },
+      // Le client.
+      "client": {
+        // Siret du client.
+        "officialReference": "1579543698745",
+        "designation": "Transports lyonnais"
+      },
+      // Le numéro de la facture.
+      "invoiceNumber": "5654-2017",
+      // La date de la facture.
+      "issued": "2017-04-01",
+      // Total hors taxe.
+      "total": 30.00,
+      // Total TTC.
+      "totalIncludingTaxes": 44.00,
+      // Liste d'items de la facture
+      "items": [
+        {
+          // Libellé
+          "designation": "VGP",
+          // La référence
+          "reference": "VGP",
+          // Le prix net
+          "netPrice": 10.00,
+          // La quantité
+          "quantity": 1,
+          // Le prix total HT
+          "totalNetPrice": 10.00,
+          // Le taux de TVA
+          "taxRate": 20.00,
+          // Le montant de la TVA
+          "tax": 2.00,
+          // Le total TTC
+          "totalIncludingTaxes": 22.00
+        },
+        {
+          // Libellé
+          "designation": "Divers",
+          // La référence
+          "reference": "Divers",
+          // Le prix net
+          "netPrice": 20.00,
+          // La quantité
+          "quantity": 1,
+          // Le prix total HT
+          "totalNetPrice": 20.00,
+          // Le taux de TVA
+          "taxRate": 10.00,
+          // Le montant de la TVA
+          "tax": 2.00,
+          // Le total TTC
+          "totalIncludingTaxes": 22.00
+        }
+
+      ]
+    }
+  ]
+}
